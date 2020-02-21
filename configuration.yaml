@@ -1,0 +1,81 @@
+
+# Configure a default setup of Home Assistant (frontend, api, etc)
+default_config:
+# Uncomment this if you are using SSL/TLS, running in Docker container, etc.
+# http:
+#   base_url: example.duckdns.org:8123
+
+# Text to speech
+tts:
+  - platform: google_translate
+
+group: !include groups.yaml
+automation: !include automations.yaml
+script: !include scripts.yaml
+
+sensor groundfloor:
+
+  - platform: mqtt
+
+    state_topic: "temperature1"
+
+    name: 'humidity'
+
+    unit_of_measurement: "%"
+
+sensor outdoor:
+
+  - platform: mqtt
+
+    state_topic: "temperature"
+
+    name: 'temperature'
+
+    unit_of_measurement: "C"
+
+switch:
+  - platform: mqtt
+    command_topic: "switch1"
+    state_topic: "switch1"
+    name: 'light'
+ 
+  - platform: mqtt
+    command_topic: "inghanshu312/feeds/Fan"
+    state_topic: "inghanshu312/feeds/Fan"
+    name: 'fan'
+  - platform: mqtt
+    command_topic: "RpiFan"
+    state_topic: "RpiFan"
+    name: 'Server Fan'
+
+cloud:
+  google_actions:
+    filter:
+      include_entities:
+        - light.kitchen
+        - fan.room
+        - temp.room
+        - fan.server     
+      include_domains:
+        - switch
+        - sensor
+    entity_config:
+      
+      switch.kitchen:
+        name: light
+        aliases:
+         - bright lights
+         - entry lights
+        room: living room
+   
+      switch.room:
+        name: fan
+        room: living room
+      switch.room:
+        name: Server fan
+        room: Drawing room
+    
+      sensor.temperature:
+        name: temp
+        aliases:
+        room: living room    
